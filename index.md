@@ -103,11 +103,11 @@ text: "Taiwan R User Group Website"
 ---
 ## 如果指定 a 的 attribute 或 text
 ```r
-If we had '<a href = "www.meetup.com/Taiwan-R">stats</a>'
+If we had '<a href = "www.meetup.com/Taiwan-R">Taiwan R User Group Website</a>'
 ```
 xpath 可以用 ...
 ```r
-"//a[@href = ’www.meetup.com/Taiwan-R’]" or "//a[text() = ’stats’]"
+"//a[@href = ’www.meetup.com/Taiwan-R’]" or "//a[text() = ’Taiwan R User Group Website’]"
 ```
 ```r
 nodename : a
