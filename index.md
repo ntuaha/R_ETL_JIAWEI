@@ -145,7 +145,8 @@ remDr$navigate(url)
 doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
 
 titles <- sapply(doc, function(doc){
-    doc$getElementText()})
+  doc$getElementText()
+})
 
 ```
 

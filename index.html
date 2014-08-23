@@ -245,7 +245,8 @@ remDr$navigate(url)
 <pre><code class="r">doc &lt;- remDr$findElements(&quot;xpath&quot;, &quot;//ul/li/div/div/h4/a&quot;)
 
 titles &lt;- sapply(doc, function(doc){
-    doc$getElementText()})
+  doc$getElementText()
+})
 
 </code></pre>
 
