@@ -225,8 +225,8 @@ news_yahoo <- readLines('news_yahoo.txt')
 
 ### [鉅亨網　房地產新聞](http://house.cnyes.com/News/tw_housenews/List.htm)
 ```{r message=FALSE}
-setwd('~/R_ETL_JIAWEI/')
-hourse_news <- readLines('jiawei/news.txt') 
+
+hourse_news <- readLines(ETL_file('news.txt')) 
 head(hourse_news)
 ```
 

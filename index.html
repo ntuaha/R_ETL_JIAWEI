@@ -356,22 +356,29 @@ news_yahoo &lt;- readLines(&#39;news_yahoo.txt&#39;)
   <article data-timings="">
     <h3><a href="http://house.cnyes.com/News/tw_housenews/List.htm">鉅亨網　房地產新聞</a></h3>
 
-<pre><code class="r">setwd(&#39;~/R_ETL_JIAWEI/&#39;)
-hourse_news &lt;- readLines(&#39;jiawei/news.txt&#39;) 
+<pre><code class="r">hourse_news &lt;- readLines(ETL_file(&#39;news.txt&#39;)) 
 </code></pre>
 
-<pre><code>## Warning: incomplete final line found on &#39;jiawei/news.txt&#39;
+<pre><code>## Error: could not find function &quot;ETL_file&quot;
 </code></pre>
 
 <pre><code class="r">head(hourse_news)
 </code></pre>
 
-<pre><code>## [1] &quot;2014-06-24富邦人壽信義區再插旗 A25案172億元奪標&quot;                          
-## [2] &quot;2014-06-24北市A25地上權案 富邦權利金172.88億元得標&quot;                       
-## [3] &quot;2014-06-23房市管制 央行將化明為暗&quot;                                        
-## [4] &quot;2014-06-20史上頭一遭!大直新地王 1坪212萬＃超越信義之星直逼帝寶 中山新天價&quot;
-## [5] &quot;2014-06-20大直帝景水花園實價首破200萬 北市3大豪宅板塊確立&quot;                
-## [6] &quot;2014-06-19樺福千金捷運宅標脫率89.4% 均價63萬元屬合理範圍&quot;
+<pre><code>##      dates       
+## [1,] &quot;2014-06-24&quot;
+## [2,] &quot;2014-06-24&quot;
+## [3,] &quot;2014-06-23&quot;
+## [4,] &quot;2014-06-20&quot;
+## [5,] &quot;2014-06-20&quot;
+## [6,] &quot;2014-06-19&quot;
+##      titles                                                           
+## [1,] &quot;富邦人壽信義區再插旗 A25案172億元奪標&quot;                          
+## [2,] &quot;北市A25地上權案 富邦權利金172.88億元得標&quot;                       
+## [3,] &quot;房市管制 央行將化明為暗&quot;                                        
+## [4,] &quot;史上頭一遭!大直新地王 1坪212萬＃超越信義之星直逼帝寶 中山新天價&quot;
+## [5,] &quot;大直帝景水花園實價首破200萬 北市3大豪宅板塊確立&quot;                
+## [6,] &quot;樺福千金捷運宅標脫率89.4% 均價63萬元屬合理範圍&quot;
 </code></pre>
 
   </article>
