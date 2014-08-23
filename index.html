@@ -74,23 +74,6 @@
 <slide class="" id="slide-3" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
-    <h2>匯入套件</h2>
-  </hgroup>
-  <article data-timings="">
-    <pre><code class="r">require(DSC2014Tutorial)
-require(RSelenium)
-require(stringr)
-require(xts)
-require(reshape2)
-</code></pre>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-4" style="background:; background-repeat:no-repeat; background-position:center; ">
-  <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
-  <hgroup>
     <h2>CH1 抓取網路資料</h2>
   </hgroup>
   <article data-timings="">
@@ -99,7 +82,7 @@ require(reshape2)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-5" style="background:; background-repeat:no-repeat; background-position:center; ">
+<slide class="" id="slide-4" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
     <h2>What is HTML?</h2>
@@ -113,7 +96,7 @@ require(reshape2)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-6" style="background:; background-repeat:no-repeat; background-position:center; ">
+<slide class="" id="slide-5" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
     <h2>Document Object Model (DOM)</h2>
@@ -127,7 +110,7 @@ require(reshape2)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-7" style="background:; background-repeat:no-repeat; background-position:center; ">
+<slide class="" id="slide-6" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
     <h2>樹狀結構的內容</h2>
@@ -153,7 +136,7 @@ text: &quot;Taiwan R User Group Website&quot;
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-8" style="background:; background-repeat:no-repeat; background-position:center; ">
+<slide class="" id="slide-7" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
     <h2>xpath 常用到的操作</h2>
@@ -171,7 +154,7 @@ text: &quot;Taiwan R User Group Website&quot;
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-9" style="background:; background-repeat:no-repeat; background-position:center; ">
+<slide class="" id="slide-8" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
     <h2>如果想抓 a 的話</h2>
@@ -188,7 +171,7 @@ text: &quot;Taiwan R User Group Website&quot;
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-10" style="background:; background-repeat:no-repeat; background-position:center; ">
+<slide class="" id="slide-9" style="background:; background-repeat:no-repeat; background-position:center; ">
   <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
   <hgroup>
     <h2>如果指定 a 的 attribute 或 text</h2>
@@ -205,6 +188,23 @@ text: &quot;Taiwan R User Group Website&quot;
 <pre><code class="r">nodename : a
 attribute : href with value &quot;www.meetup.com/Taiwan-R&quot;
 text: &quot;Taiwan R User Group Website&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:; background-repeat:no-repeat; background-position:center; ">
+  <img src="assets/img/Taiwan-R-logo.png" class="logo fit100" />
+  <hgroup>
+    <h2>匯入套件</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">require(DSC2014Tutorial)
+require(RSelenium)
+require(stringr)
+require(xts)
+require(reshape2)
 </code></pre>
 
   </article>
@@ -357,7 +357,7 @@ news_yahoo &lt;- readLines(&#39;news_yahoo.txt&#39;)
   <article data-timings="">
     <h3><a href="http://house.cnyes.com/News/tw_housenews/List.htm">鉅亨網　房地產新聞</a></h3>
 
-<pre><code class="r">f &lt;- file(ETL_file(&#39;news.txt&#39;), encoding = &#39;utf-8&#39;)
+<pre><code class="r">f &lt;- file(ETL_file(&#39;news.txt&#39;), encoding=&quot;UTF-8&quot;)
 hourse_news &lt;- readLines(f) 
 head(hourse_news)
 </code></pre>
@@ -2084,49 +2084,49 @@ titles[index]
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='匯入套件'>
+        data-slide=3 title='CH1 抓取網路資料'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='CH1 抓取網路資料'>
+        data-slide=4 title='What is HTML?'>
          4
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='What is HTML?'>
+        data-slide=5 title='Document Object Model (DOM)'>
          5
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=6 title='Document Object Model (DOM)'>
+        data-slide=6 title='樹狀結構的內容'>
          6
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=7 title='樹狀結構的內容'>
+        data-slide=7 title='xpath 常用到的操作'>
          7
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=8 title='xpath 常用到的操作'>
+        data-slide=8 title='如果想抓 a 的話'>
          8
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=9 title='如果想抓 a 的話'>
+        data-slide=9 title='如果指定 a 的 attribute 或 text'>
          9
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=10 title='如果指定 a 的 attribute 或 text'>
+        data-slide=10 title='匯入套件'>
          10
       </a>
     </li>

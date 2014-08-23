@@ -23,20 +23,6 @@ mode        : selfcontained # {standalone, draft}
 
 ## 學習，實作，觀察 STEP3
 
-
----
-
-## 匯入套件
-
-
-```r
-require(DSC2014Tutorial)
-require(RSelenium)
-require(stringr)
-require(xts)
-require(reshape2)
-```
-
 ---
 
 ## CH1 抓取網路資料
@@ -115,6 +101,20 @@ nodename : a
 attribute : href with value "www.meetup.com/Taiwan-R"
 text: "Taiwan R User Group Website"
 ```
+
+---
+
+## 匯入套件
+
+
+```r
+require(DSC2014Tutorial)
+require(RSelenium)
+require(stringr)
+require(xts)
+require(reshape2)
+```
+
 
 ---
   
@@ -228,7 +228,7 @@ news_yahoo <- readLines('news_yahoo.txt')
 
 
 ```r
-f <- file(ETL_file('news.txt'), encoding = 'utf-8')
+f <- file(ETL_file('news.txt'), encoding="UTF-8")
 hourse_news <- readLines(f) 
 head(hourse_news)
 ```
