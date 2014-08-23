@@ -29,6 +29,7 @@ mode        : selfcontained # {standalone, draft}
 ## 匯入套件
 
 ```{r message=FALSE}
+require(DSC2014Tutorial)
 require(RSelenium)
 require(stringr)
 require(xts)
@@ -224,9 +225,10 @@ news_yahoo <- readLines('news_yahoo.txt')
 ## 匯入這次用的資料
 
 ### [鉅亨網　房地產新聞](http://house.cnyes.com/News/tw_housenews/List.htm)
-```{r message=FALSE}
 
-hourse_news <- readLines(ETL_file('news.txt')) 
+```{r message=FALSE, warning=FALSE}
+f <- file(ETL_file('news.txt'), encoding = 'utf-8')
+hourse_news <- readLines(f) 
 head(hourse_news)
 ```
 
@@ -316,8 +318,8 @@ head(hourse_news,3)
 ### [[:blank:]] 表示分隔符號
 
 ```r
-str_replace_all(piece, "[[:punct:]]", "")
-str_replace_all(piece, "[[:blank:]]", "")
+str_replace_all("<>?:%!", "[[:punct:]]", "")
+str_replace_all("\t ", "[[:blank:]]", "")
 ```
 
 ---
@@ -333,7 +335,7 @@ punctuation
 ```
 
 ```r
-str_replace_all(piece, punctuation, "")
+str_replace_all("。 ； ， ： “ ” （ ） 、 ？ 《 》", punctuation, "")
 ```
 
 ---
@@ -549,7 +551,7 @@ cohesion <- function(word){
 ---
 ## 進行計算
 
-```{r}
+```{r warning=FALSE}
 cohesion_val <- sapply(words, cohesion, USE.NAMES = FALSE)
 names(cohesion_val) <- words
 coh_words <- names(which(cohesion_val > 10))
@@ -743,7 +745,7 @@ count.months["2014-01/2014-05", 100:110]
 
 ```r
 library('quantmod')
-f = file('~/stock.csv', encoding='utf-8')
+f = file(ETL_file('stock.csv'), encoding='utf-8')
 stock <- read.csv(f, stringsAsFactors=FALSE)
 
 stock_no <- stock[,1]
@@ -756,6 +758,7 @@ stock_code <- paste(stock_no, '.TW', sep='')
 ### 開始下載
 
 ```r
+mystocks <- new.env()
 getSymbols(stock_code, env=mystocks, from="2014-01-01", to="2014-07-02")
 mystocks <- do.call(cbind,eapply(mystocks, Cl))
 names(mystocks) <- stock_name
@@ -768,7 +771,7 @@ saveRDS(mystocks, "mystocks.rds")
 ### 算出每支股票的 平均漲跌
 
 ```{r}
-mystocks <- readRDS('jiawei/mystocks.rds')
+mystocks <- readRDS(ETL_file('mystocks.rds'))
 mystocks.return <- diff(mystocks, 1) / mystocks
 ```
 ```{r echo=FALSE}
