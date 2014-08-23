@@ -185,7 +185,7 @@ webElem$sendKeysToElement(list("房價", key = "enter"))
 ```
 
 ---
-## 練習題
+## 練習題 1
 
 ### 1. 請找出每個搜尋結果的 xpath
 ### 2. 請找出下一頁的 xpath
@@ -203,18 +203,6 @@ for(i in 1:10){
 }
 ```
 
----
-## 解答
-### 1. 每個搜尋結果的 xpath
-
-```r
-"//li/div/div/h3/a"
-```
-
-### 2. 下一頁的 xpath
-```r
-"pg-next"
-```
 
 ---
 
@@ -238,7 +226,7 @@ news_yahoo <- readLines('news_yahoo.txt')
 ### [鉅亨網　房地產新聞](http://house.cnyes.com/News/tw_housenews/List.htm)
 
 ```r
-setwd('~/R_ETL')
+setwd('~/R_ETL_JIAWEI/')
 hourse_news <- readLines('jiawei/news.txt') 
 ```
 
@@ -314,15 +302,11 @@ str_extract(x, "[ap]{1,4}")
 ```
 
 ---
-## 練習題
-### 猜猜看這要批配出什麼東西？ 
+## 練習題2
+### 猜猜看這會批配出什麼東西？ 
 
 ```r
 str_extract(x, "a[elp]+s")
-```
-
-```
-## [1] "apples" NA       NA       NA
 ```
 
 
@@ -346,9 +330,9 @@ gsub(patten, "\\1, \\2", x)
 
 ---
 
-## 練習題
+## 練習題3
 
-請填入適當的 Patten
+請填入適當的 Patten，產生出下面結果
 
 ```r
 dates <- str_extract(hourse_news, ___)
@@ -423,7 +407,7 @@ substr('富邦人壽信義區再插旗 A25案172億元奪標', 5, 7)
 
 ---
 
-## 練習題
+## 練習題4
 
 ### 請填入適當指令，呈現出下面使用範例
 ```r
@@ -435,6 +419,7 @@ ngram <- function(sentence, n){
   return(chunk)
 }
 ```
+
 
 
 ### 使用範例
@@ -450,6 +435,7 @@ ngram('富邦人壽信義區再插旗', 2)
 
 ---
 
+## 練習題5
 ### 請填入適當指令，呈現出下面使用範例
 ```r
 segmentWord <- function(word){
@@ -462,6 +448,7 @@ segmentWord <- function(word){
   return(seg)
 }
 ```
+
 
 
 
@@ -564,7 +551,7 @@ grep('富邦$' , c('富邦金', '法人富邦', '台北富邦銀行'))
 
 ---
 
-## 練習題
+## 練習題6
 ### 請找出信義區 開頭/結尾 的字串
 
 ```r
@@ -581,26 +568,26 @@ matchs2 <- grep( __ , __ , value = TRUE)
 
 ---
 
-## 練習題
+## 練習題7
 
 ### 請挑出單字長度 2~5 的 候選詞彙
+
 ```r
 words_2_5 <- unique(unlist(piece[ ___ ]))
 ```
 
 
-
 ```
-##  [1] "市前3"      "房仲：網路" "林公園"     "申報"       "炒房！江揆"
-##  [6] "等房屋稅"   "去年1"      "？政院駁斥" "福地"       "開案"      
-## [11] "逾5成"      "、房價漲"   "-17買頂"    "北市新一期" "議避免"
+##  [1] "盛和：空屋" "閱熱度增9"  ".65%"       "後車"       "、2個"     
+##  [6] "三峽後起"   "現居"       "月推"       "台中年增"   "錄地政士法"
+## [11] "火線政院"   "更親民"     "暖身大安"   "去年全"     "將蓋商用大"
 ```
 
 --- &vcenter
 
 ## 單字 出現次數分佈
 
-![plot of chunk unnamed-chunk-26](assets/fig/unnamed-chunk-26.png) 
+![plot of chunk unnamed-chunk-24](assets/fig/unnamed-chunk-24.png) 
 
 ---
 ## which 用法
@@ -611,7 +598,7 @@ practice > 12
 ```
 
 ```
-##  [1] FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE  TRUE FALSE FALSE
+##  [1] FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE  TRUE
 ```
 
 ```r
@@ -619,12 +606,12 @@ which(practice > 12)
 ```
 
 ```
-## [1] 5 6 8
+## [1]  3  4  5 10
 ```
 
 ---
 
-## 練習題
+## 練習題8
   
 ### 請透過 words_freq 找出 words_2_5 出現次數>2 的詞彙
 ```r
@@ -681,7 +668,7 @@ coh_words <- names(which(cohesion_val > 10))
 
 ---
 
-![plot of chunk unnamed-chunk-33](assets/fig/unnamed-chunk-33.png) 
+![plot of chunk unnamed-chunk-31](assets/fig/unnamed-chunk-31.png) 
 
 ---
 ### 計算單字左右兩邊可以串接其他單字的程度
@@ -728,7 +715,7 @@ names(disorder_val) <- coh_words
 --- &vcenter
 ## 單字兩側的混亂程度分佈
 
-![plot of chunk unnamed-chunk-37](assets/fig/unnamed-chunk-37.png) 
+![plot of chunk unnamed-chunk-35](assets/fig/unnamed-chunk-35.png) 
 
 ---
 ## 混亂程度的例子
@@ -749,7 +736,7 @@ names(disorder_val) <- coh_words
 ```
 
 ---
-## 練習題
+## 練習題9
 ### 請用 which 挑出 disorder_val 混亂程度 >1 的單字
 
 ```r
@@ -786,7 +773,7 @@ lapply(c("a", "e"), function(x){
 ```
 
 ---
-## 練習題
+## 練習題10
 ### 請算出 dis_words 裡面每個單字在新聞 title 的出現次數
 
 ```r
@@ -800,13 +787,13 @@ colnames(words_tbl) <- dis_words
 
 
 ```
-##      文山區 店面租賃 .5% 增近 最熱 店面交易 逾4成 單價
-## [1,]      0        0   0    0    0        0     0    0
-## [2,]      0        0   0    0    0        0     0    0
-## [3,]      0        0   0    0    0        0     0    0
-## [4,]      0        0   0    0    0        0     0    0
-## [5,]      0        0   0    0    0        0     0    0
-## [6,]      0        0   0    0    0        0     0    0
+##      中山區最 置產 25日前提 預計 大安 80萬 增近 文山區
+## [1,]        0    0        0    0    0    0    0      0
+## [2,]        0    0        0    0    0    0    0      0
+## [3,]        0    0        0    0    0    0    0      0
+## [4,]        0    0        0    0    0    0    0      0
+## [5,]        0    0        0    0    0    0    0      0
+## [6,]        0    0        0    0    0    0    0      0
 ```
 
 ---
@@ -836,7 +823,7 @@ xts(x,y)
 ```
 
 ---
-## 練習題
+## 練習題11
 ### 請將 words_tbl 轉換成 xts 格式
 
 ```r
@@ -898,7 +885,7 @@ count.weeks["2014-01/2014-02", 100:110]
 ```
 
 ---
-## 練習題
+## 練習題12
 ### 請計算每個單字在 1~5 月的 每個月出現次數
 ```r
 ep.month <- endpoints(words_tbl_xts, ___ , k=1)
@@ -975,7 +962,7 @@ mystocks.return <- diff(mystocks, 1) / mystocks
 ```r
 mystocks.return_all <- apply(mystocks.return[-1,], 1, mean)
 ```
-![plot of chunk unnamed-chunk-54](assets/fig/unnamed-chunk-54.png) 
+![plot of chunk unnamed-chunk-52](assets/fig/unnamed-chunk-52.png) 
 
 
 ---
@@ -992,7 +979,7 @@ cl <- kmeans(mystocks.return_all, 5)
 
 ```
 ## 2014-01-02 2014-01-03 2014-01-06 2014-01-07 2014-01-08 
-##          5          1          4          2          5
+##          5          4          3          2          5
 ```
 
 
@@ -1012,8 +999,8 @@ s1 <- sort(s1)
 ```
 
 ```
-##         4         1         5         3         2 
-## -0.022497 -0.005096 -0.001468  0.001153  0.007018
+##          3          4          1          5          2 
+## -0.0224974 -0.0064732 -0.0031008  0.0006223  0.0070185
 ```
 
 ---
@@ -1033,11 +1020,11 @@ return.status <- data.frame(cluster=cl$cluster, count=rep(1, length(cl$cluster))
 
 ```
 ##   cluster count
-## 1    不變     1
+## 1    漲少     1
 ## 2    跌少     1
 ## 3    跌多     1
 ## 4    漲多     1
-## 5    不變     1
+## 5    漲少     1
 ## 6    跌少     1
 ```
 
@@ -1072,11 +1059,11 @@ return.status <- data.frame(cluster=cl$cluster, count=rep(1, length(cl$cluster))
 
 ```
 ##   cluster count
-## 1    不變     1
+## 1    漲少     1
 ## 2    跌少     1
 ## 3    跌多     1
 ## 4    漲多     1
-## 5    不變     1
+## 5    漲少     1
 ## 6    跌少     1
 ```
 
@@ -1091,11 +1078,11 @@ return.status <- data.frame(cluster=cl$cluster, count=rep(1, length(cl$cluster))
 
 ```
 ##   cluster count
-## 1    不變     1
+## 1    漲少     1
 ## 2    跌少     1
 ## 3    跌多     1
 ## 4    漲多     1
-## 5    不變     1
+## 5    漲少     1
 ## 6    跌少     1
 ```
 
@@ -1105,11 +1092,11 @@ return.status <- data.frame(cluster=cl$cluster, count=rep(1, length(cl$cluster))
 
 ```
 ##   return_date 不變 漲多 漲少 跌多 跌少
-## 1  2014-01-02    1    0    0    0    0
+## 1  2014-01-02    0    0    1    0    0
 ## 2  2014-01-03    0    0    0    0    1
 ## 3  2014-01-06    0    0    0    1    0
 ## 4  2014-01-07    0    1    0    0    0
-## 5  2014-01-08    1    0    0    0    0
+## 5  2014-01-08    0    0    1    0    0
 ## 6  2014-01-09    0    0    0    0    1
 ```
 
@@ -1162,7 +1149,7 @@ x.dc <- dcast(x.m, w1+w2 ~ variable)
 
 
 ---
-## 練習題
+## 練習題13
 ###  請利用 return_date 和 cluster 整理出下面表格
 
 ```r
@@ -1176,11 +1163,11 @@ return.status <- dcast(return.status, ___  ~ ___ , fill = 0)
 
 ```
 ##   return_date 不變 漲多 漲少 跌多 跌少
-## 1  2014-01-02    1    0    0    0    0
+## 1  2014-01-02    0    0    1    0    0
 ## 2  2014-01-03    0    0    0    0    1
 ## 3  2014-01-06    0    0    0    1    0
 ## 4  2014-01-07    0    1    0    0    0
-## 5  2014-01-08    1    0    0    0    0
+## 5  2014-01-08    0    0    1    0    0
 ## 6  2014-01-09    0    0    0    0    1
 ```
 
@@ -1194,11 +1181,11 @@ return.status.xts <- xts(return.status[,-1], as.POSIXct(return_date))
 
 ```
 ##            不變 漲多 漲少 跌多 跌少
-## 2014-01-02    1    0    0    0    0
+## 2014-01-02    0    0    1    0    0
 ## 2014-01-03    0    0    0    0    1
 ## 2014-01-06    0    0    0    1    0
 ## 2014-01-07    0    1    0    0    0
-## 2014-01-08    1    0    0    0    0
+## 2014-01-08    0    0    1    0    0
 ## 2014-01-09    0    0    0    0    1
 ```
 
@@ -1225,7 +1212,7 @@ merge.xts(x,y)
 ```
 
 ---
-## 練習題
+## 練習題14
 ### 把`關鍵字`和`股票漲跌`依據`時間`做合併, 欄位名稱 : words_tbl_xts, return.status.xts
 
 ```r
@@ -1236,7 +1223,7 @@ names(final_tbl) <- c(dis_words, names(return.status[,-1]))
 
 ```
 ##            信義計畫區 ：豪宅交易 25日前提 不變 漲多 漲少 跌多 跌少
-## 2014-01-02          0          0        0    1    0    0    0    0
+## 2014-01-02          0          0        0    0    0    1    0    0
 ## 2014-01-02          0          0        0    0    0    0    0    0
 ## 2014-01-02          0          0        0    0    0    0    0    0
 ## 2014-01-02          0          0        0    0    0    0    0    0
@@ -1323,17 +1310,17 @@ for(col in c('跌多','跌少','不變','漲少','漲多')){
 ```
 
 ```
-##       [,1]   [,2]       [,3]     [,4]       [,5]  
-##  [1,] "跌多" "跌少"     "不變"   "漲少"     "漲多"
-##  [2,] "總銷" "標脫"     "現身"   "合宜住宅" "增加"
-##  [3,] "直逼" "標售"     "下半年" "漲逾"     "換屋"
-##  [4,] "公園" "萬華"     "售屋"   "增近"     "可以"
-##  [5,] "招標" "新隆國宅" "房地產" "汐止"     "重劃"
-##  [6,] "漲逾" "直逼"     "商圈"   "中和"     "所得"
-##  [7,] "商圈" "招標"     "子」"   "占比"     "網路"
-##  [8,] "標售" "買賣"     "置產"   "置產"     "最受"
-##  [9,] "增加" "增近"     "換屋"   "網路"     "點閱"
-## [10,] "現身" "中和"     "重劃"   "成交量"   "推案"
+##       [,1]   [,2]   [,3]       [,4]       [,5]  
+##  [1,] "跌多" "跌少" "不變"     "漲少"     "漲多"
+##  [2,] "總銷" "買賣" "標售"     "下半年"   "增加"
+##  [3,] "直逼" "增近" "信義之星" "不動產"   "換屋"
+##  [4,] "公園" "空屋" "標脫"     "合宜住宅" "可以"
+##  [5,] "招標" "可以" "售屋"     "漲逾"     "重劃"
+##  [6,] "漲逾" "雙張" "熱門"     "現身"     "所得"
+##  [7,] "商圈" "標脫" "直逼"     "增近"     "網路"
+##  [8,] "標售" "萬華" "招標"     "財長"     "最受"
+##  [9,] "增加" "移轉" "商圈"     "汐止"     "點閱"
+## [10,] "現身" "破千" "現身"     "子」"     "推案"
 ```
 
 ---
@@ -1372,7 +1359,7 @@ titles[index]
 ```
 
 ---
-## 練習題
+## 練習題15
 
 ### 請利用 grepl 與 & 找出同時出現 '捷運' 與 '房價' 的 titles
 
@@ -1413,4 +1400,163 @@ y <- fit$points[,2]
 ```r
 plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", type = "n")
 text(x, y, labels = row.names(t(final_tbl)), cex=.7)
+```
+
+---
+## 解答篇
+
+---
+## 解答1
+### 1. 每個搜尋結果的 xpath
+
+```r
+search_title <- list()
+for(i in 1:10){
+  webElems <- remDr$findElements(using = "xpath", "//li/div/div/h3/a")
+  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
+
+  search_title <- append(search_title, resHeaders)
+  webElems <- remDr$findElement(using = "id", value = "pg-next")
+  webElems$clickElement()
+
+}
+
+```
+
+---
+## 解答2
+
+```r
+x <- c("apples * 14", "flour", "sugar * 100", "milk * 3")
+str_extract(x, "a[elp]+s")
+```
+
+```
+## [1] "apples" NA       NA       NA
+```
+
+---
+## 解答3
+```r
+dates <- str_extract(hourse_news, "\\d{4}-\\d{2}-\\d{2}")
+titles <- str_replace(hourse_news, "\\d{4}-\\d{2}-\\d{2}", "")
+
+hourse_news <- cbind(dates, titles)
+```
+
+---
+## 解答4
+```r
+ngram <- function(sentence, n){
+  chunk <- c()
+  for(i in 1 : (nchar(sentence)-n+1)){
+    chunk <- append(chunk, substr(sentence, i, i+n-1))
+  }
+  return(chunk)
+}
+```
+
+---
+## 解答5
+
+```r
+segmentWord <- function(word){
+  n <- nchar(word)-1
+  seg <- lapply(1: n, function(i){
+    w1 <- substr(word, 1, i)
+    w2 <- substr(word,i+1, n+1)
+    c(w1,w2)
+  })
+  return(seg)
+}
+```
+
+---
+## 解答6
+
+```r
+word <- '信義區'
+BASE <- piece[[as.character(nchar(word)+1)]]
+  
+PATTEN1 <- paste('^', '信義區', sep = '')
+matchs1 <- grep(PATTEN1 ,BASE , value = TRUE)
+  
+PATTEN2 <- paste('信義區' ,'$', sep = '' )
+matchs2 <- grep(PATTEN1 ,BASE , value = TRUE)
+
+```
+
+---
+## 解答7
+```r
+words_2_5 <- unique(unlist(piece[2:5]))
+```
+
+---
+## 解答8
+```r
+words <- names(which(words_freq[words_2_5] > 2))
+```
+
+
+---
+## 解答9
+```r
+dis_words <- names(which(disorder_val > 1))
+```
+
+---
+## 解答10
+
+```r
+tmp <- lapply(dis_words, function(word){
+  str_count(titles, word)
+})
+words_tbl <- do.call(cbind, tmp)
+colnames(words_tbl) <- dis_words
+words_tbl[1:6, sample(ncol(words_tbl), 8)]
+```
+
+---
+## 解答11
+
+```r
+words_tbl_xts <- xts(words_tbl, as.POSIXct(dates))
+```
+
+
+---
+## 解答12
+
+```r
+ep.months <- endpoints(words_tbl_xts, "months", k=1)
+count.months <- period.apply(words_tbl_xts, ep.months, FUN=colSums)
+count.months["2014-01/2014-05", 100:110]
+```
+
+---
+## 解答13
+
+```r
+return_date <- names(mystocks.return_all)
+
+return.status <- dcast(return.status, return_date  ~ cluster, fill = 0)
+```
+
+
+---
+## 解答14
+
+```r
+final_tbl <- merge.xts(words_tbl_xts, return.status.xts, fill=0)
+names(final_tbl) <- c(dis_words, names(return.status[,-1]))
+```
+
+---
+## 解答15
+
+```r
+index <- grepl("捷運", titles) & grepl("房價", titles)
+titles[index]
+
 ```
