@@ -109,101 +109,88 @@ text: "Taiwan R User Group Website"
 
 ```r
 require(DSC2014Tutorial)
-require(RSelenium)
+require(XML)
 require(stringr)
 require(xts)
 require(reshape2)
 ```
 
+--- 
+## 開啟下載好的 html 檔案
 
----
-  
-## 打開 phantomjs
+### [資料來源 - yahoo 新聞](https://tw.news.yahoo.com/real-estate/archive/1.html)
+
 
 ```r
-
-pJS <- phantom()
-Sys.sleep(5) # give the binary a moment
-remDr <- remoteDriver(browserName = 'phantomjs')
-remDr$open()
-
+docs <- grep("*.html",dir(ETL_file('')), value = TRUE)
 ```
 
----
 
-## 抓 yahoo 房地產新聞 title
-
-### open url
 
 ```r
-url <- 'https://tw.news.yahoo.com/real-estate/archive/1.html'
-remDr$navigate(url)
-```
-
-### parse html
- 
-```r
-doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
-
-titles <- sapply(doc, function(doc){
-  doc$getElementText()
+pages <- sapply(docs, function(d){
+  f <- file(ETL_file(d), encoding = 'UTF-8')
+  f_size <- file.info(ETL_file(d))$size
+  content <- readChar(f, f_size)
+  close(f)
+  return(content)
 })
-
-```
-
-
----
-
-## 連續抓10頁
-
-```r
-title <- list()
-
-for(i in 1:10){
-  url <- sprintf('https://tw.news.yahoo.com/real-estate/archive/%d.html', i)
-  remDr$navigate(url)
-  doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
-  tmp <- sapply(doc, function(doc){
-    doc$getElementText()})
-  title <- append(title, tmp)
-} 
 ```
 
 ---
-## 抓 yahoo 搜尋結果
+## 抓出 title和 連結
 
-### open url
+
 ```r
-remDr$navigate("https://tw.yahoo.com/")
+library(XML)
+doc <- htmlTreeParse(pages[1], useInternalNodes = TRUE)
+
+attr <- xpathApply(doc, "//ul/li/div/div/h4/a", xmlAttrs)
+text <- xpathSApply(doc, "//ul/li/div/div/h4/a", xmlValue)
 ```
-### 找出搜尋欄
-```r
-webElem <- remDr$findElement(using = "id", "p")
+
+### text 結果
+
 ```
-### 輸入"房價", 並點擊搜尋
-```r
-webElem$sendKeysToElement(list("房價", key = "enter"))
+## [1] "稅制改革座談 財長明督軍"                      
+## [2] "缺地… 租稅引導產業南移"                       
+## [3] "房地合一 建商：重稅擾民"                      
+## [4] "租不起 「天天見麵」悄收台北店"                
+## [5] "《世紀專欄》地價稅納稅義務基準日為每年8月31日"
+## [6] "苗房屋標準單價公告調整 7月起實施"
 ```
 
 ---
-## 練習題 1
+## 一次抓多篇
 
-### 1. 請找出每個搜尋結果的 xpath
-### 2. 請找出下一頁的 xpath
 
 ```r
-search_title <- list()
-for(i in 1:10){
-  webElems <- remDr$findElements(using = "xpath", ____ )
-  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
-
-  search_title <- append(search_title, resHeaders)
-  webElems <- remDr$findElement(using = "id", value = ____ )
-  webElems$clickElement()
-
-}
+title <- lapply(pages, function(p){
+  doc <- htmlTreeParse(p, useInternalNodes = TRUE)
+  xpathSApply(doc, "//ul/li/div/div/h4/a", xmlValue)
+})
 ```
 
+```
+## [[1]]
+## [1] "稅制改革座談 財長明督軍" "缺地… 租稅引導產業南移" 
+## 
+## [[2]]
+## [1] "抗議一地兩價 遷建戶下跪向費鴻泰陳情"
+## [2] "房產觀望氣氛 中市推案減兩成"        
+## 
+## [[3]]
+## [1] "綠大地五股市區 千坪綠地" "在地專家"
+```
+
+--- 
+
+## 練習題1
+### 請抓出新聞來源, 日期, 時間
+
+```r
+src_list <- xpathSApply(doc, ___ , xmlValue)
+```
 
 ---
 
@@ -224,7 +211,7 @@ news_yahoo <- readLines('news_yahoo.txt')
 
 ## 匯入這次用的資料
 
-### [鉅亨網　房地產新聞](http://house.cnyes.com/News/tw_housenews/List.htm)
+### [資料來源 - 鉅亨網](http://house.cnyes.com/News/tw_housenews/List.htm)
 
 
 ```r
@@ -470,6 +457,15 @@ piece <- list()
 
 piece[['1']] <- unlist(sapply(titles, ngram, 1, USE.NAMES = FALSE))
 piece[['2']] <- unlist(sapply(titles, ngram, 2, USE.NAMES = FALSE))
+```
+
+```
+## Warning: closing unused connection 6 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
+## Warning: closing unused connection 7 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
+## Warning: closing unused connection 5 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
+```
+
+```r
 piece[['3']] <- unlist(sapply(titles, ngram, 3, USE.NAMES = FALSE))
 piece[['4']] <- unlist(sapply(titles, ngram, 4, USE.NAMES = FALSE))
 piece[['5']] <- unlist(sapply(titles, ngram, 5, USE.NAMES = FALSE))
@@ -573,16 +569,16 @@ words_2_5 <- unique(unlist(piece[ ___ ]))
 
 
 ```
-##  [1] "！小坪頂1"  "奢侈稅抑量" "小坪數物"   "多元居住"   "總銷破"    
-##  [6] "保留戶張盛" "市房仲網點" "幅漲0."     "後車"       "是1、"     
-## [11] "淡水、三"   "實現"       "6月"        "都買賣移"   "140億元"
+##  [1] "雙張下周會" "理覆議"     "股東"       "實價登錄恐" "南熱北"    
+##  [6] "微跌0."     "增加平"     "站附屬土地" "銷2"        "2-10"      
+## [11] "侈稅有"     "首件海"     "法翻新8"    "登錄中小"   "新一品"
 ```
 
 --- &vcenter
 
 ## 單字 出現次數分佈
 
-![plot of chunk unnamed-chunk-24](assets/fig/unnamed-chunk-24.png) 
+![plot of chunk unnamed-chunk-30](assets/fig/unnamed-chunk-30.png) 
 
 ---
 ## which 用法
@@ -593,7 +589,7 @@ practice > 12
 ```
 
 ```
-##  [1]  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE  TRUE
+##  [1] FALSE  TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE
 ```
 
 ```r
@@ -601,7 +597,7 @@ which(practice > 12)
 ```
 
 ```
-## [1]  1  5  9 10
+## [1] 2 6 8
 ```
 
 ---
@@ -616,7 +612,7 @@ words <- names(which( ___ ))
 
 
 ```
-## piece_clean
+## 
 ## 地政士法覆 政士法覆議 ：豪宅交易      14-01      4-01-   25日前提 
 ##          7          7          3          3          3          3
 ```
@@ -663,7 +659,7 @@ coh_words <- names(which(cohesion_val > 10))
 
 ---
 
-![plot of chunk unnamed-chunk-31](assets/fig/unnamed-chunk-31.png) 
+![plot of chunk unnamed-chunk-37](assets/fig/unnamed-chunk-37.png) 
 
 ---
 ### 計算單字左右兩邊可以串接其他單字的程度
@@ -710,7 +706,7 @@ names(disorder_val) <- coh_words
 --- &vcenter
 ## 單字兩側的混亂程度分佈
 
-![plot of chunk unnamed-chunk-35](assets/fig/unnamed-chunk-35.png) 
+![plot of chunk unnamed-chunk-41](assets/fig/unnamed-chunk-41.png) 
 
 ---
 ## 混亂程度的例子
@@ -782,13 +778,13 @@ colnames(words_tbl) <- dis_words
 
 
 ```
-##      9.4 .5% 士林 路段 豪宅交易 房價年漲 周邊 住宅價格
-## [1,]   0   0    0    0        0        0    0        0
-## [2,]   0   0    0    0        0        0    0        0
-## [3,]   0   0    0    0        0        0    0        0
-## [4,]   0   0    0    0        0        0    0        0
-## [5,]   0   0    0    0        0        0    0        0
-## [6,]   1   0    0    0        0        0    0        0
+##      文山區 簽約 覆議案 房市量縮 周邊 售屋 每坪 增加
+## [1,]      0    0      0        0    0    0    0    0
+## [2,]      0    0      0        0    0    0    0    0
+## [3,]      0    0      0        0    0    0    0    0
+## [4,]      0    0      0        0    0    0    0    0
+## [5,]      0    0      0        0    0    0    0    0
+## [6,]      0    0      0        0    0    0    0    0
 ```
 
 ---
@@ -808,13 +804,13 @@ xts(x,y)
 ```
 
 ```
-## [1] "2014-08-24" "2014-08-25"
+## [1] "2014-08-25" "2014-08-26"
 ```
 
 ```
 ##            [,1] [,2]
-## 2014-08-24    1    3
-## 2014-08-25    2    4
+## 2014-08-25    1    3
+## 2014-08-26    2    4
 ```
 
 ---
@@ -958,7 +954,7 @@ mystocks.return <- diff(mystocks, 1) / mystocks
 ```r
 mystocks.return_all <- apply(mystocks.return[-1,], 1, mean)
 ```
-![plot of chunk unnamed-chunk-52](assets/fig/unnamed-chunk-52.png) 
+![plot of chunk unnamed-chunk-58](assets/fig/unnamed-chunk-58.png) 
 
 
 ---
@@ -975,7 +971,7 @@ cl <- kmeans(mystocks.return_all, 5)
 
 ```
 ## 2014-01-02 2014-01-03 2014-01-06 2014-01-07 2014-01-08 
-##          3          4          2          1          3
+##          3          4          5          2          3
 ```
 
 
@@ -995,7 +991,7 @@ s1 <- sort(s1)
 ```
 
 ```
-##          2          4          3          5          1 
+##          5          4          3          1          2 
 ## -0.0224974 -0.0049706 -0.0005121  0.0035959  0.0092449
 ```
 
@@ -1198,13 +1194,13 @@ merge.xts(x,y)
 
 ```
 ##             x  y
-## 2014-08-24 NA  1
-## 2014-08-25 NA  2
-## 2014-08-26  3  3
-## 2014-08-27  4  4
-## 2014-08-28  5  5
-## 2014-08-29  6 NA
-## 2014-08-30  7 NA
+## 2014-08-25 NA  1
+## 2014-08-26 NA  2
+## 2014-08-27  3  3
+## 2014-08-28  4  4
+## 2014-08-29  5  5
+## 2014-08-30  6 NA
+## 2014-08-31  7 NA
 ```
 
 ---
@@ -1403,19 +1399,9 @@ text(x, y, labels = row.names(t(final_tbl)), cex=.7)
 
 ---
 ## 解答1
-### 1. 每個搜尋結果的 xpath
 
 ```r
-search_title <- list()
-for(i in 1:10){
-  webElems <- remDr$findElements(using = "xpath", "//li/div/div/h3/a")
-  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
-
-  search_title <- append(search_title, resHeaders)
-  webElems <- remDr$findElement(using = "id", value = "pg-next")
-  webElems$clickElement()
-
-}
+src_list <- xpathSApply(doc, "//cite", xmlValue)
 
 ```
 
@@ -1554,5 +1540,91 @@ names(final_tbl) <- c(dis_words, names(return.status[,-1]))
 ```r
 index <- grepl("捷運", titles) & grepl("房價", titles)
 titles[index]
+
+```
+
+---
+  
+## 打開 phantomjs
+
+```r
+
+pJS <- phantom()
+Sys.sleep(5) # give the binary a moment
+remDr <- remoteDriver(browserName = 'phantomjs')
+remDr$open()
+
+```
+
+---
+
+## 抓 yahoo 房地產新聞 title
+
+### open url
+
+```r
+url <- 'https://tw.news.yahoo.com/real-estate/archive/1.html'
+remDr$navigate(url)
+```
+
+### parse html
+ 
+```r
+doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
+
+titles <- sapply(doc, function(doc){
+  doc$getElementText()
+})
+
+```
+
+
+---
+
+## 連續抓10頁
+
+```r
+title <- list()
+
+for(i in 1:10){
+  url <- sprintf('https://tw.news.yahoo.com/real-estate/archive/%d.html', i)
+  remDr$navigate(url)
+  doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
+  tmp <- sapply(doc, function(doc){
+    doc$getElementText()})
+  title <- append(title, tmp)
+} 
+```
+
+---
+## 抓 yahoo 搜尋結果
+
+### open url
+```r
+remDr$navigate("https://tw.yahoo.com/")
+```
+### 找出搜尋欄
+```r
+webElem <- remDr$findElement(using = "id", "p")
+```
+### 輸入"房價", 並點擊搜尋
+```r
+webElem$sendKeysToElement(list("房價", key = "enter"))
+```
+
+---
+### 抓內容並點擊下一頁
+
+```r
+search_title <- list()
+for(i in 1:10){
+  webElems <- remDr$findElements(using = "xpath", "//li/div/div/h3/a")
+  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
+
+  search_title <- append(search_title, resHeaders)
+  webElems <- remDr$findElement(using = "id", value = "pg-next")
+  webElems$clickElement()
+
+}
 
 ```

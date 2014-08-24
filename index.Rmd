@@ -108,102 +108,74 @@ text: "Taiwan R User Group Website"
 
 ```{r message=FALSE}
 require(DSC2014Tutorial)
-require(RSelenium)
+require(XML)
 require(stringr)
 require(xts)
 require(reshape2)
 
 ```
 
+--- 
+## 開啟下載好的 html 檔案
 
----
-  
-## 打開 phantomjs
+### [資料來源 - yahoo 新聞](https://tw.news.yahoo.com/real-estate/archive/1.html)
 
-```r
+```{r}
+docs <- grep("*.html",dir(ETL_file('')), value = TRUE)
+```
 
-pJS <- phantom()
-Sys.sleep(5) # give the binary a moment
-remDr <- remoteDriver(browserName = 'phantomjs')
-remDr$open()
 
+```{r}
+pages <- sapply(docs, function(d){
+  f <- file(ETL_file(d), encoding = 'UTF-8')
+  f_size <- file.info(ETL_file(d))$size
+  content <- readChar(f, f_size)
+  close(f)
+  return(content)
+})
 ```
 
 ---
+## 抓出 title和 連結
 
-## 抓 yahoo 房地產新聞 title
+```{r}
+library(XML)
+doc <- htmlTreeParse(pages[1], useInternalNodes = TRUE)
 
-### open url
+attr <- xpathApply(doc, "//ul/li/div/div/h4/a", xmlAttrs)
+text <- xpathSApply(doc, "//ul/li/div/div/h4/a", xmlValue)
 
-```r
-url <- 'https://tw.news.yahoo.com/real-estate/archive/1.html'
-remDr$navigate(url)
 ```
 
-### parse html
- 
-```r
-doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
+### text 結果
+```{r echo=FALSE}
+text[1:6]
+```
 
-titles <- sapply(doc, function(doc){
-  doc$getElementText()
+---
+## 一次抓多篇
+
+```{r}
+title <- lapply(pages, function(p){
+  doc <- htmlTreeParse(p, useInternalNodes = TRUE)
+  xpathSApply(doc, "//ul/li/div/div/h4/a", xmlValue)
 })
 
 ```
-
-
----
-
-## 連續抓10頁
-
-```r
-title <- list()
-
-for(i in 1:10){
-  url <- sprintf('https://tw.news.yahoo.com/real-estate/archive/%d.html', i)
-  remDr$navigate(url)
-  doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
-  tmp <- sapply(doc, function(doc){
-    doc$getElementText()})
-  title <- append(title, tmp)
-} 
+```{r echo=FALSE}
+lapply(1:3, function(i){
+    title[[i]][1:2]
+})
 ```
 
----
-## 抓 yahoo 搜尋結果
+--- 
 
-### open url
-```r
-remDr$navigate("https://tw.yahoo.com/")
-```
-### 找出搜尋欄
-```r
-webElem <- remDr$findElement(using = "id", "p")
-```
-### 輸入"房價", 並點擊搜尋
-```r
-webElem$sendKeysToElement(list("房價", key = "enter"))
-```
-
----
-## 練習題 1
-
-### 1. 請找出每個搜尋結果的 xpath
-### 2. 請找出下一頁的 xpath
+## 練習題1
+### 請抓出新聞來源, 日期, 時間
 
 ```r
-search_title <- list()
-for(i in 1:10){
-  webElems <- remDr$findElements(using = "xpath", ____ )
-  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
-
-  search_title <- append(search_title, resHeaders)
-  webElems <- remDr$findElement(using = "id", value = ____ )
-  webElems$clickElement()
-
-}
+src_list <- xpathSApply(doc, ___ , xmlValue)
 ```
-
 
 ---
 
@@ -224,7 +196,7 @@ news_yahoo <- readLines('news_yahoo.txt')
 
 ## 匯入這次用的資料
 
-### [鉅亨網　房地產新聞](http://house.cnyes.com/News/tw_housenews/List.htm)
+### [資料來源 - 鉅亨網](http://house.cnyes.com/News/tw_housenews/List.htm)
 
 ```{r message=FALSE, warning=FALSE}
 f <- file(ETL_file('news.txt'), encoding="UTF-8")
@@ -490,6 +462,7 @@ words_2_5 <- unique(unlist(piece[ ___ ]))
 ```
 
 ```{r echo=FALSE}
+words_2_5 <- unique(unlist(piece[2:5]))
 words_2_5[sample(length(words_2_5),15)]
 ```
 
@@ -522,7 +495,7 @@ words <- names(which( ___ ))
 words <- names(which(words_freq[words_2_5] > 2))
 ```
 ```{r echo=FALSE}
-tail(word_freq[words_2_5][words_freq[words_2_5] > 2])
+tail(words_freq[words_2_5][words_freq[words_2_5] > 2])
 ```
 
 ---
@@ -1082,19 +1055,9 @@ text(x, y, labels = row.names(t(final_tbl)), cex=.7)
 
 ---
 ## 解答1
-### 1. 每個搜尋結果的 xpath
 
 ```r
-search_title <- list()
-for(i in 1:10){
-  webElems <- remDr$findElements(using = "xpath", "//li/div/div/h3/a")
-  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
-
-  search_title <- append(search_title, resHeaders)
-  webElems <- remDr$findElement(using = "id", value = "pg-next")
-  webElems$clickElement()
-
-}
+src_list <- xpathSApply(doc, "//cite", xmlValue)
 
 ```
 
@@ -1228,5 +1191,91 @@ names(final_tbl) <- c(dis_words, names(return.status[,-1]))
 ```r
 index <- grepl("捷運", titles) & grepl("房價", titles)
 titles[index]
+
+```
+
+---
+  
+## 打開 phantomjs
+
+```r
+
+pJS <- phantom()
+Sys.sleep(5) # give the binary a moment
+remDr <- remoteDriver(browserName = 'phantomjs')
+remDr$open()
+
+```
+
+---
+
+## 抓 yahoo 房地產新聞 title
+
+### open url
+
+```r
+url <- 'https://tw.news.yahoo.com/real-estate/archive/1.html'
+remDr$navigate(url)
+```
+
+### parse html
+ 
+```r
+doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
+
+titles <- sapply(doc, function(doc){
+  doc$getElementText()
+})
+
+```
+
+
+---
+
+## 連續抓10頁
+
+```r
+title <- list()
+
+for(i in 1:10){
+  url <- sprintf('https://tw.news.yahoo.com/real-estate/archive/%d.html', i)
+  remDr$navigate(url)
+  doc <- remDr$findElements("xpath", "//ul/li/div/div/h4/a")
+  tmp <- sapply(doc, function(doc){
+    doc$getElementText()})
+  title <- append(title, tmp)
+} 
+```
+
+---
+## 抓 yahoo 搜尋結果
+
+### open url
+```r
+remDr$navigate("https://tw.yahoo.com/")
+```
+### 找出搜尋欄
+```r
+webElem <- remDr$findElement(using = "id", "p")
+```
+### 輸入"房價", 並點擊搜尋
+```r
+webElem$sendKeysToElement(list("房價", key = "enter"))
+```
+
+---
+### 抓內容並點擊下一頁
+
+```r
+search_title <- list()
+for(i in 1:10){
+  webElems <- remDr$findElements(using = "xpath", "//li/div/div/h3/a")
+  resHeaders <- unlist(lapply(webElems, function(x){x$getElementText()}))
+
+  search_title <- append(search_title, resHeaders)
+  webElems <- remDr$findElement(using = "id", value = "pg-next")
+  webElems$clickElement()
+
+}
 
 ```
