@@ -614,14 +614,7 @@ piece &lt;- list()
 
 piece[[&#39;1&#39;]] &lt;- unlist(sapply(titles, ngram, 1, USE.NAMES = FALSE))
 piece[[&#39;2&#39;]] &lt;- unlist(sapply(titles, ngram, 2, USE.NAMES = FALSE))
-</code></pre>
-
-<pre><code>## Warning: closing unused connection 6 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
-## Warning: closing unused connection 7 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
-## Warning: closing unused connection 5 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
-</code></pre>
-
-<pre><code class="r">piece[[&#39;3&#39;]] &lt;- unlist(sapply(titles, ngram, 3, USE.NAMES = FALSE))
+piece[[&#39;3&#39;]] &lt;- unlist(sapply(titles, ngram, 3, USE.NAMES = FALSE))
 piece[[&#39;4&#39;]] &lt;- unlist(sapply(titles, ngram, 4, USE.NAMES = FALSE))
 piece[[&#39;5&#39;]] &lt;- unlist(sapply(titles, ngram, 5, USE.NAMES = FALSE))
 piece[[&#39;6&#39;]] &lt;- unlist(sapply(titles, ngram, 6, USE.NAMES = FALSE))

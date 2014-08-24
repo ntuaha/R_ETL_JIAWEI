@@ -457,15 +457,6 @@ piece <- list()
 
 piece[['1']] <- unlist(sapply(titles, ngram, 1, USE.NAMES = FALSE))
 piece[['2']] <- unlist(sapply(titles, ngram, 2, USE.NAMES = FALSE))
-```
-
-```
-## Warning: closing unused connection 6 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
-## Warning: closing unused connection 7 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
-## Warning: closing unused connection 5 (/home/dboyliao/R/x86_64-pc-linux-gnu-library/3.1/DSC2014Tutorial/ETL/news.txt)
-```
-
-```r
 piece[['3']] <- unlist(sapply(titles, ngram, 3, USE.NAMES = FALSE))
 piece[['4']] <- unlist(sapply(titles, ngram, 4, USE.NAMES = FALSE))
 piece[['5']] <- unlist(sapply(titles, ngram, 5, USE.NAMES = FALSE))

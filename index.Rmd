@@ -387,7 +387,7 @@ segmentWord('富邦銀')
 ---
 ## 操作
 ### 把字段長度1~6都列舉出來看看 
-```{r}
+```{r message=FALSE, warning=FALSE}
 titles <- gsub("\\s", "", titles)
 piece <- list()
 
