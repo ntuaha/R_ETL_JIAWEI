@@ -1195,6 +1195,12 @@ titles[index]
 ```
 
 ---
+
+## 附錄 
+### 為前面網頁的下載步驟，使用套件為 [RSelenium](https://github.com/ropensci/RSelenium)
+### 若有問題再與講者討論
+
+---
   
 ## 打開 phantomjs
 
