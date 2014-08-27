@@ -70,9 +70,9 @@ text: "Taiwan R User Group Website"
 
 - // selects from anywhere in the tree
 
-- . selects current node
+- '.' selects current node
 
-- .. selects parent of current node
+- '..' selects parent of current node
 
 - @ selects attributes
 
@@ -92,9 +92,13 @@ text: "Taiwan R User Group Website"
 ```r
 If we had '<a href = "www.meetup.com/Taiwan-R">Taiwan R User Group Website</a>'
 ```
-xpath 可以用 ...
+抓出 href = ’www.meetup.com/Taiwan-R’ 的 a
 ```r
-"//a[@href = ’www.meetup.com/Taiwan-R’]" or "//a[text() = ’Taiwan R User Group Website’]"
+"//a[@href = ’www.meetup.com/Taiwan-R’]"
+```
+抓出 text = ’Taiwan R User Group Website’ 的 a
+```r
+"//a[text() = ’Taiwan R User Group Website’]"
 ```
 ```r
 nodename : a
@@ -136,6 +140,10 @@ pages <- sapply(docs, function(d){
   return(content)
 })
 ```
+
+---
+<img src = './resources/figures/xpath.png' ></img>
+
 
 ---
 ## 抓出 title和 連結
@@ -193,8 +201,12 @@ src_list <- xpathSApply(doc, ___ , xmlValue)
 ```
 
 ---
+<img src = './resources/figures/xpath.png' ></img>
 
-## 保存/讀取 抓下來的數據
+
+---
+
+## (自行操作) 保存/讀取 抓下來的數據
 
 ### 先將結果合併為表格
 ```r
@@ -285,7 +297,7 @@ str_extract(x, "[ap]{1,4}")
 
 ---
 ## 練習題2
-### 猜猜看這會批配出什麼東西？ 
+### 猜猜看這會批配出什麼東西？ (十秒鐘猜猜看)
 
 ```r
 str_extract(x, "a[elp]+s")
@@ -314,7 +326,11 @@ gsub(patten, "\\1, \\2", x)
 
 ## 練習題3
 
-請填入適當的 Patten，產生出下面結果
+請利用下面提示，填入適當的 Patten，產生出下面結果
+```r
+提示：
+\\d{?}-\\d{?}-\\d{?}
+```
 
 ```r
 dates <- str_extract(hourse_news, ___)
@@ -391,7 +407,7 @@ substr('富邦人壽信義區再插旗 A25案172億元奪標', 5, 7)
 
 ## 練習題4
 
-### 請填入適當指令，呈現出下面使用範例
+### 空格填 i or i+1，才呈現出下面使用範例？
 ```r
 ngram <- function(sentence, n){
   chunk <- c()
@@ -418,7 +434,7 @@ ngram('富邦人壽信義區再插旗', 2)
 ---
 
 ## 練習題5
-### 請填入適當指令，呈現出下面使用範例
+### 空格填 i or i+1，才能呈現出下面使用範例？
 ```r
 segmentWord <- function(word){
   n <- nchar(word)-1
@@ -535,16 +551,17 @@ grep('富邦$' , c('富邦金', '法人富邦', '台北富邦銀行'))
 
 ## 練習題6
 ### 請找出信義區 開頭/結尾 的字串
+### 可以參考上一頁
 
 ```r
 word <- '信義區'
 BASE <- piece[[as.character(nchar(word)+1)]]
   
-PATTEN1 <- paste( __ , __, sep = __ )
-matchs1 <- grep( __ , __ , value = TRUE)
+PATTEN1 <- paste( __ , '信義區', sep = '')
+matchs1 <- grep(PATTEN1 , BASE, value = TRUE)
   
-PATTEN2 <- paste( __ , __ , sep = __ )
-matchs2 <- grep( __ , __ , value = TRUE)
+PATTEN2 <- paste('信義區' , __ , sep = '')
+matchs2 <- grep(PATTEN2 , BASE, value = TRUE)
 
 ```
 
@@ -553,6 +570,7 @@ matchs2 <- grep( __ , __ , value = TRUE)
 ## 練習題7
 
 ### 請挑出單字長度 2~5 的 候選詞彙
+### 填入 1:5 or 2:5 ??
 
 ```r
 words_2_5 <- unique(unlist(piece[ ___ ]))
@@ -560,9 +578,9 @@ words_2_5 <- unique(unlist(piece[ ___ ]))
 
 
 ```
-##  [1] "雙張下周會" "理覆議"     "股東"       "實價登錄恐" "南熱北"    
-##  [6] "微跌0."     "增加平"     "站附屬土地" "銷2"        "2-10"      
-## [11] "侈稅有"     "首件海"     "法翻新8"    "登錄中小"   "新一品"
+##  [1] "Q4"         "明年初提"   "市前3"      "增房仲：網" "森林公"    
+##  [6] "申報"       "續打炒房！" "邊等房屋"   "市去年"     "半套？政院"
+## [11] "市福"       "開案"       "域逾5"      "成、房價"   "02-17"
 ```
 
 --- &vcenter
@@ -580,7 +598,7 @@ practice > 12
 ```
 
 ```
-##  [1] FALSE  TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE
+##  [1]  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE
 ```
 
 ```r
@@ -588,7 +606,7 @@ which(practice > 12)
 ```
 
 ```
-## [1] 2 6 8
+## [1]  1  4  8 10
 ```
 
 ---
@@ -596,8 +614,9 @@ which(practice > 12)
 ## 練習題8
   
 ### 請透過 words_freq 找出 words_2_5 出現次數>2 的詞彙
+
 ```r
-words <- names(which( ___ ))
+words <- names(which(words_2_5] > __ ))
 ```
 
 
@@ -722,7 +741,7 @@ names(disorder_val) <- coh_words
 ### 請用 which 挑出 disorder_val 混亂程度 >1 的單字
 
 ```r
-dis_words <- names( ___ )
+dis_words <- names(which(disorder_val > __ ))
 ```
 
 
@@ -756,7 +775,8 @@ lapply(c("a", "e"), function(x){
 
 ---
 ## 練習題10
-### 請算出 dis_words 裡面每個單字在新聞 title 的出現次數
+### dis_words 裡面每個單字在新聞 title 的出現次數是多少？
+### 請填入 dis_words 和 title
 
 ```r
 tmp <- lapply( __ , function(word){
@@ -769,13 +789,13 @@ colnames(words_tbl) <- dis_words
 
 
 ```
-##      文山區 簽約 覆議案 房市量縮 周邊 售屋 每坪 增加
-## [1,]      0    0      0        0    0    0    0    0
-## [2,]      0    0      0        0    0    0    0    0
-## [3,]      0    0      0        0    0    0    0    0
-## [4,]      0    0      0        0    0    0    0    0
-## [5,]      0    0      0        0    0    0    0    0
-## [6,]      0    0      0        0    0    0    0    0
+##      半年 招標 大安區 社會住宅 房屋稅 移轉 網路 實價登錄
+## [1,]    0    0      0        0      0    0    0        0
+## [2,]    0    0      0        0      0    0    0        0
+## [3,]    0    0      0        0      0    0    0        0
+## [4,]    0    0      0        0      0    0    0        0
+## [5,]    0    0      0        0      0    0    0        0
+## [6,]    0    0      0        0      0    0    0        0
 ```
 
 ---
@@ -795,18 +815,19 @@ xts(x,y)
 ```
 
 ```
-## [1] "2014-08-25" "2014-08-26"
+## [1] "2014-08-28" "2014-08-29"
 ```
 
 ```
 ##            [,1] [,2]
-## 2014-08-25    1    3
-## 2014-08-26    2    4
+## 2014-08-28    1    3
+## 2014-08-29    2    4
 ```
 
 ---
 ## 練習題11
 ### 請將 words_tbl 轉換成 xts 格式
+### 提示：就是要轉 words_tbl ！！ 
 
 ```r
 words_tbl_xts <- xts( ___ , as.POSIXct(dates))
@@ -869,6 +890,9 @@ count.weeks["2014-01/2014-02", 100:110]
 ---
 ## 練習題12
 ### 請計算每個單字在 1~5 月的 每個月出現次數
+### 填入 weeks or months ?
+### 填入 2014-?/2014-?
+
 ```r
 ep.month <- endpoints(words_tbl_xts, ___ , k=1)
 count.month <- period.apply(words_tbl_xts, __ , FUN=colSums)
@@ -962,7 +986,7 @@ cl <- kmeans(mystocks.return_all, 5)
 
 ```
 ## 2014-01-02 2014-01-03 2014-01-06 2014-01-07 2014-01-08 
-##          3          4          5          2          3
+##          5          2          1          4          5
 ```
 
 
@@ -982,7 +1006,7 @@ s1 <- sort(s1)
 ```
 
 ```
-##          5          4          3          1          2 
+##          1          2          5          3          4 
 ## -0.0224974 -0.0049706 -0.0005121  0.0035959  0.0092449
 ```
 
@@ -1185,18 +1209,18 @@ merge.xts(x,y)
 
 ```
 ##             x  y
-## 2014-08-25 NA  1
-## 2014-08-26 NA  2
-## 2014-08-27  3  3
-## 2014-08-28  4  4
-## 2014-08-29  5  5
-## 2014-08-30  6 NA
-## 2014-08-31  7 NA
+## 2014-08-28 NA  1
+## 2014-08-29 NA  2
+## 2014-08-30  3  3
+## 2014-08-31  4  4
+## 2014-09-01  5  5
+## 2014-09-02  6 NA
+## 2014-09-03  7 NA
 ```
 
 ---
 ## 練習題14
-### 把`關鍵字`和`股票漲跌`依據`時間`做合併, 欄位名稱 : words_tbl_xts, return.status.xts
+### 把`關鍵字`和`股票漲跌`依據`時間`做合併, 表格名稱 : words_tbl_xts, return.status.xts
 
 ```r
 final_tbl <- merge.xts( ___ , ___ , fill=0)
@@ -1347,7 +1371,7 @@ titles[index]
 ### 請利用 grepl 與 & 找出同時出現 '捷運' 與 '房價' 的 titles
 
 ```r
-index <- grepl( __ ) _?_ grepl( __ )
+index <- grepl( __ ) & grepl( __ )
 titles[index]
 
 ```
