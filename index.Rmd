@@ -1,6 +1,6 @@
 ---
 title       : ETL on R
-subtitle    : 
+subtitle    : 非結構化資料處理
 author      : Cheng Yu Lin (aha) and Jia Wei Chen (jiawei)
 job         : 
 license     : by-sa
@@ -12,16 +12,61 @@ widgets     : [mathjax, quiz, bootstrap]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 
 
+---
+
+<q> 什麼是非結構化資料？ </q>
+
+
+---
+
+## 結構化資料
+
+<img src = './resources/figures/structure_data.png' ></img>
+
+
+---
+
+## 半結構化資料
+
+<img src = './resources/figures/semi_structure_data.png' ></img>
+
+---
+
+## 非結構化資料
+
+<img src = './resources/figures/unstructure_data.png' ></img>
+
 --- &vcenter
 
-<q>`非結構化`的新聞與股市資料!</q>
+<q> 非結構化資料可以整理出什麼訊息呢？ </q>
+
+---
+
+<img src = './resources/figures/keyword_analytics.png' ></img>
+
+---
+
+<img src = './resources/figures/google_flu.png' ></img>
 
 
+---
 
+<q> 我們這場 tutorial 要帶給大家什麼呢 ? </q>
 
---- .dark .segue
+---
 
-## 學習，實作，觀察 STEP3
+## web scraping
+
+<img src = './resources/figures/html_pair.png' ></img>
+
+--- &vcenter
+
+<img src = './resources/figures/result1.png' ></img>
+
+--- &vcenter
+
+<img src = './resources/figures/result2.png' ></img>
+
 
 ---
 
@@ -34,6 +79,15 @@ mode        : selfcontained # {standalone, draft}
 ### 一種有結構的標記資料
 
 <img src = './resources/figures/html.png' ></img>
+
+---
+
+<img src = './resources/figures/html_pair.png' ></img>
+
+
+--- &vcenter
+
+<q> 其實它們是有結構的 </q>
 
 ---
 
@@ -125,13 +179,16 @@ require(reshape2)
 ### [資料來源 - yahoo 新聞](https://tw.news.yahoo.com/real-estate/archive/1.html)
 
 ```{r}
-docs <- grep("*.html",dir(ETL_file('')), value = TRUE)
+# 讀取 ETL 相關檔案所在的路徑
+path <- ETL_file('')
+docs <- grep("*.html",dir(path), value = TRUE)
 ```
 
 
 ```{r}
-pages <- sapply(docs, function(d){
-  f <- file(ETL_file(d), encoding = 'UTF-8')
+pages <- sapply(docs, function(d){  
+  path <- ETL_file(d)
+  f <- file(path, encoding = 'UTF-8')
   f_size <- file.info(ETL_file(d))$size
   content <- readChar(f, f_size)
   close(f)
@@ -139,18 +196,17 @@ pages <- sapply(docs, function(d){
 })
 ```
 
----
-<img src = './resources/figures/xpath.png' ></img>
-
 
 ---
 ## 抓出 title和 連結
 
 ```{r}
 library(XML)
+# 建立 DOM Tree
 doc <- htmlTreeParse(pages[1], useInternalNodes = TRUE)
-
+# 抓出 node a 的 attr
 attr <- xpathApply(doc, "//ul/li/div/div/h4/a", xmlAttrs)
+# 抓出 node a 的 text
 text <- xpathSApply(doc, "//ul/li/div/div/h4/a", xmlValue)
 
 ```
@@ -161,9 +217,14 @@ text[1:6]
 ```
 
 ---
+<img src = './resources/figures/xpath_title.png' ></img>
+
+
+---
 ## 一次抓多篇
 
 ```{r}
+# lapply : 最後將回傳 list 型態的結果
 title <- lapply(pages, function(p){
   doc <- htmlTreeParse(p, useInternalNodes = TRUE)
   xpathSApply(doc, "//ul/li/div/div/h4/a", xmlValue)
@@ -179,14 +240,23 @@ lapply(1:3, function(i){
 --- 
 
 ## 練習題1
-### 請抓出新聞來源, 日期, 時間
+### 請填入適當的 xpath 抓出新聞來源, 日期, 時間
 
 ```r
 src_list <- xpathSApply(doc, ___ , xmlValue)
 ```
 
 ---
-<img src = './resources/figures/xpath.png' ></img>
+<img src = './resources/figures/xpath_time.png' ></img>
+
+---
+## 解答1
+
+```r
+src_list <- xpathSApply(doc, "//cite", xmlValue)
+
+```
+
 
 
 ---
@@ -211,9 +281,10 @@ news_yahoo <- readLines('news_yahoo.txt')
 ### [資料來源 - 鉅亨網](http://house.cnyes.com/News/tw_housenews/List.htm)
 
 ```{r message=FALSE, warning=FALSE}
-f <- file(ETL_file('news.txt'), encoding="UTF-8")
-hourse_news <- readLines(f) 
-head(hourse_news)
+path <- ETL_file('news.txt')
+f <- file(path, encoding="UTF-8")
+house_news <- readLines(f) 
+head(house_news)
 ```
 
 
@@ -224,8 +295,24 @@ head(hourse_news)
 ---
 ## 正規表達 介紹
 
+```r
+\\d -> 數字 
+\\w -> 單字 
+.   -> 任意字元(數字, 單字, 標點符號 ..) 
+
+?   -> 出現 0或1 次 
++   -> 出現 1次 以上 
+*   -> 出現 0次 以上 
+
+^   -> 出現在行首
+$   -> 出現在行尾
+
+```
+
+---
+
 ```{r}
-x <- c("apples * 14", "flour", "sugar * 100", "milk * 3")
+x <- c("apples*14", "flour", "sugar*100", "milk*3")
 ```
 
 ### 批配2個數字
@@ -239,6 +326,11 @@ str_extract(x, "\\d{2,3}")
 ```
 
 ---
+
+```r
+x <- c("apples*14", "flour", "sugar*100", "milk*3")
+```
+
 ### 批配出現一次以上的a或p
 ```{r}
 str_extract(x, "[ap]+")
@@ -251,10 +343,20 @@ str_extract(x, "[ap]{1,4}")
 
 ---
 ## 練習題2
-### 猜猜看這會批配出什麼東西？ (十秒鐘猜猜看)
+### 猜猜看這會批配出什麼東西？
 
 ```r
-str_extract(x, "a[elp]+s")
+x <- c("apples*14", "flour", "allen", "aside")
+
+str_extract(x, "a[elpn]+.?")
+```
+
+---
+## 解答2
+```{r}
+x <- c("apples*14", "flour", "allen", "aside")
+
+str_extract(x, "a[elpn]+.?")
 ```
 
 
@@ -276,27 +378,36 @@ gsub(patten, "\\1, \\2", x)
 ## 練習題3
 
 請利用下面提示，填入適當的 Patten，產生出下面結果
-```r
-提示：
-\\d{?}-\\d{?}-\\d{?}
-```
 
 ```r
-dates <- str_extract(hourse_news, ___)
-titles <- str_replace(hourse_news, ___, ___)
+# 請利用 \\d{?}-\\d{?}-\\d{?} 抽取出時間 
+dates <- str_extract(house_news, ___)
 
-hourse_news <- cbind(dates, titles)
+# 請利用 \\d{?}-\\d{?}-\\d{?} 把時間取代為 ''
+titles <- str_replace(house_news, ___, ___)
+
+house_news <- cbind(dates, titles)
 ```
 
 ```{r echo=FALSE}
-dates <- str_extract(hourse_news, "\\d{4}-\\d{2}-\\d{2}")
-titles <- str_replace(hourse_news, "\\d{4}-\\d{2}-\\d{2}", "")
+dates <- str_extract(house_news, "\\d{4}-\\d{2}-\\d{2}")
+titles <- str_replace(house_news, "\\d{4}-\\d{2}-\\d{2}", "")
 
-hourse_news <- cbind(dates, titles)
+house_news <- cbind(dates, titles)
 ```
 ```{r echo=FALSE}
-head(hourse_news,3)
+head(house_news,3)
 ```
+
+---
+## 解答3
+```r
+dates <- str_extract(house_news, "\\d{4}-\\d{2}-\\d{2}")
+titles <- str_replace(house_news, "\\d{4}-\\d{2}-\\d{2}", "")
+
+house_news <- cbind(dates, titles)
+```
+
 
 ---
 
@@ -305,9 +416,10 @@ head(hourse_news,3)
 ### [[:punct:]] 表示標點符號
 ### [[:blank:]] 表示分隔符號
 
-```r
-str_replace_all("<>?:%!", "[[:punct:]]", "")
-str_replace_all("\t ", "[[:blank:]]", "")
+```{r}
+str_replace_all("i l<ik>e ?R pr:ogr,a%mi!ng", "[[:punct:]]", "")
+str_replace_all("a \t p \t p ", "[[:blank:]]", "")
+
 ```
 
 ---
@@ -322,9 +434,14 @@ punctuation <- "\u3002 \uff1b \uff0c \uff1a \u201c \u201d \uff08 \uff09 \u3001 \
 punctuation
 ```
 
-```r
+```{r}
 str_replace_all("。 ； ， ： “ ” （ ） 、 ？ 《 》", punctuation, "")
 ```
+
+--- &vcenter
+
+<q> 再來要介紹一個非常重要的 function </q>
+
 
 ---
 
@@ -334,6 +451,15 @@ str_replace_all("。 ； ， ： “ ” （ ） 、 ？ 《 》", punctuation, 
 substr('富邦人壽信義區再插旗 A25案172億元奪標', 1, 4)
 substr('富邦人壽信義區再插旗 A25案172億元奪標', 5, 7)
 ```
+
+--- &vcenter
+
+<q>看來很簡單,那為什麼說它很重要呢？</q>
+
+
+--- &vcenter
+
+<q> 做個練習可能就有感覺了 </q>
 
 
 ---
@@ -367,12 +493,122 @@ ngram('富邦人壽信義區再插旗', 2)
 ```
 
 
+
+---
+## 解答4
+```r
+ngram <- function(sentence, n){
+  chunk <- c()
+  for(i in 1 : (nchar(sentence)-n+1)){
+    chunk <- append(chunk, substr(sentence, i, i+n-1))
+  }
+  return(chunk)
+}
+```
+
+---
+
+```{r}
+sapply(titles, ngram, 2, USE.NAMES = FALSE)[1:3]
+```
+
+---
+
+```{r}
+sapply(titles, ngram, 3, USE.NAMES = FALSE)[1:3]
+```
+
+
+--- &vcenter
+
+<q> 透過substr才能從文章裡抽出詞彙呀！ </q>
+
+
+---
+
+## 把字段長度1~6都列舉出來，並分別儲存
+
+```{r message=FALSE, warning=FALSE}
+titles <- gsub("\\s", "", titles)
+piece <- list()
+
+piece[['1']] <- unlist(sapply(titles, ngram, 1, USE.NAMES = FALSE))
+piece[['2']] <- unlist(sapply(titles, ngram, 2, USE.NAMES = FALSE))
+piece[['3']] <- unlist(sapply(titles, ngram, 3, USE.NAMES = FALSE))
+piece[['4']] <- unlist(sapply(titles, ngram, 4, USE.NAMES = FALSE))
+piece[['5']] <- unlist(sapply(titles, ngram, 5, USE.NAMES = FALSE))
+piece[['6']] <- unlist(sapply(titles, ngram, 6, USE.NAMES = FALSE))
+
+```
+
+
+--- &vcenter
+
+<q> 但是有個問題 ！ </q>
+
+---
+
+```{r}
+sapply(titles, ngram, 3, USE.NAMES = FALSE)[1:3]
+```
+
+--- &vcenter
+
+<q>注意到了嗎？</q>
+<q>裡面有很多沒意義的字串</q>
+
+
+--- &vcenter
+
+<q>如何解決呢？</q>
+
+
+
+--- &vcenter
+
+<q> '房價偏' 是不是一個有意義的詞彙呢？ </q>
+
+
+--- &vcenter
+
+<q> '房價' + '偏' 是否機率獨立？</q>
+
+<q> '房' + '價偏' 是否機率獨立？</q>
+
+
+--- &vcenter
+
+<q> 服貿協議 </q>
+
+<q> '服貿協' 右邊幾乎只能接 '議'</q>
+
+<q> '貿協議' 左邊幾乎只能接 '服'</q>
+
+
+--- &vcenter
+
+<q> 利用這兩種性質來篩選掉沒意義的字串 </q>
+
+
+--- &vcenter
+
+<q> 但是程式該怎麼寫呢？ </q>
+
+
+--- &vcenter
+
+<q> 繼續用 substr ! </q>
+
+<q> 然後加上一點簡單的正規表達 </q>
+
 ---
 
 ## 練習題5
-### 空格填 i or i+1，才能呈現出下面使用範例？
+### 空格填 i or i+1，才能呈現出下一頁的使用範例？
+
 ```r
 segmentWord <- function(word){
+  # nchar 算字串長度
   n <- nchar(word)-1
   seg <- lapply(1: n, function(i){
     w1 <- substr(word, 1, i)
@@ -383,6 +619,7 @@ segmentWord <- function(word){
 }
 ```
 
+---
 
 ```{r echo=FALSE}
 segmentWord <- function(word){
@@ -398,23 +635,29 @@ segmentWord <- function(word){
 
 ```{r}
 segmentWord('富邦銀')
+segmentWord('大同區全')
 ```
+
 
 ---
-## 操作
-### 把字段長度1~6都列舉出來看看 
-```{r message=FALSE, warning=FALSE}
-titles <- gsub("\\s", "", titles)
-piece <- list()
+## 解答5
 
-piece[['1']] <- unlist(sapply(titles, ngram, 1, USE.NAMES = FALSE))
-piece[['2']] <- unlist(sapply(titles, ngram, 2, USE.NAMES = FALSE))
-piece[['3']] <- unlist(sapply(titles, ngram, 3, USE.NAMES = FALSE))
-piece[['4']] <- unlist(sapply(titles, ngram, 4, USE.NAMES = FALSE))
-piece[['5']] <- unlist(sapply(titles, ngram, 5, USE.NAMES = FALSE))
-piece[['6']] <- unlist(sapply(titles, ngram, 6, USE.NAMES = FALSE))
-
+```r
+segmentWord <- function(word){
+  n <- nchar(word)-1
+  seg <- lapply(1: n, function(i){
+    w1 <- substr(word, 1, i)
+    w2 <- substr(word,i+1, n+1)
+    c(w1,w2)
+  })
+  return(seg)
+}
 ```
+
+--- &vcenter
+
+<q>已經會把字串兩個兩個拆開</q>
+<q>但是機率從哪來 ? </q>
 
 ---
 ## 操作
@@ -440,6 +683,16 @@ words_prob <- words_freq / N
 tail(words_prob, 5)
 ```
 
+
+--- &vcenter
+
+<q> 以下這種性質要怎麼寫出程式呢？ </q>
+
+<q> '服貿協' 右邊幾乎只能接 '議'</q>
+
+<q> '貿協議' 左邊幾乎只能接 '服'</q>
+
+
 ---
 ## paste, grep 用法
 
@@ -453,85 +706,107 @@ grep('富邦$' , c('富邦金', '法人富邦', '台北富邦銀行'))
 ---
 
 ## 練習題6
-### 請找出信義區 開頭/結尾 的字串
+### 請找出 '義區' 開頭/結尾 的字串
 ### 可以參考上一頁
 
 ```r
-word <- '信義區'
+word <- '義區'
+
+# 找出比 '義區' 字串長度 多1 的所有字串
 BASE <- piece[[as.character(nchar(word)+1)]]
-  
-PATTEN1 <- paste( __ , '信義區', sep = '')
+
+# 找出 '義區' 開頭的字串
+PATTEN1 <- paste( __ , '義區', sep = '')
 matchs1 <- grep(PATTEN1 , BASE, value = TRUE)
   
-PATTEN2 <- paste('信義區' , __ , sep = '')
+# 找出 '義區' 結尾的字串
+PATTEN2 <- paste('義區' , __ , sep = '')
 matchs2 <- grep(PATTEN2 , BASE, value = TRUE)
 
 ```
 
+
+---
+## 解答6
+
+```{r}
+word <- '義區'
+
+# 找出比 '義區' 字串長度 多1 的所有字串
+BASE <- piece[[as.character(nchar(word)+1)]]
+
+# 找出 '義區' 開頭的字串
+PATTEN1 <- paste('^', '義區', sep = '')
+matchs1 <- grep(PATTEN1 ,BASE , value = TRUE)
+
+# 找出 '義區' 結尾的字串
+PATTEN2 <- paste('義區' ,'$', sep = '' )
+matchs2 <- grep(PATTEN2 ,BASE , value = TRUE)
+
+```
+```{r echo=FALSE}
+matchs1
+matchs2
+```
+
 ---
 
-## 練習題7
+## 挑出單字長度 2~5 的 候選詞彙
 
-### 請挑出單字長度 2~5 的 候選詞彙
-### 填入 1:5 or 2:5 ??
 
-```r
-words_2_5 <- unique(unlist(piece[ ___ ]))
+```{r}
+words_2_5 <- unique(unlist(piece[2:5]))
 ```
 
 ```{r echo=FALSE}
-words_2_5 <- unique(unlist(piece[2:5]))
 words_2_5[sample(length(words_2_5),15)]
 ```
 
+
 --- &vcenter
 
-## 單字 出現次數分佈
+## 長度2~5的 單字 出現次數分佈
 
 ```{r echo=FALSE, message=FALSE}
 plot(words_freq[words_2_5], xlab = 'index', ylab = 'count')
 ```
 
+
 ---
-## which 用法
+
+## 找出 words_2_5 出現次數>2 的詞彙
+
 ```{r}
-practice <- sample(20,10)
-practice > 12
-which(practice > 12)
-```
-
----
-
-## 練習題8
-  
-### 請透過 words_freq 找出 words_2_5 出現次數>2 的詞彙
-
-```r
-words <- names(which(words_2_5] > __ ))
-```
-
-```{r echo=FALSE}
 words <- names(which(words_freq[words_2_5] > 2))
 ```
+
 ```{r echo=FALSE}
-tail(words_freq[words_2_5][words_freq[words_2_5] > 2])
+tail(words_freq[words_2_5][words_freq[words_2_5] > 2], 15)
 ```
+
 
 ---
 ## CH3 進行聚合
 
 ---
 
-## 前面 segmentWord 練習題的應用
+## 前面 segmentWord 練習題的使用
 ### ex. 算'子字串'之間是否獨立
 
 ```{r}
 cohesion <- function(word){
+  
+  # 先把 word切成兩個子字串
   seg <- segmentWord(word)
+  
   val <- sapply(seg, function(x){    
     f_word <- words_freq[word]
+    
+    # 兩塊子字串的出現次數
     f_x1 <- words_freq[x[1]]
     f_x2 <- words_freq[x[2]]
+    
+    # 兩塊子字串是否獨立
     mi <- log2(N) + log2(f_word) - log2(f_x1) - log2(f_x2)
     return(mi)
   }) 
@@ -546,6 +821,8 @@ cohesion <- function(word){
 ```{r warning=FALSE}
 cohesion_val <- sapply(words, cohesion, USE.NAMES = FALSE)
 names(cohesion_val) <- words
+
+# 挑大於10的原因請看一下一頁
 coh_words <- names(which(cohesion_val > 10))
 ```
 ```{r echo=FALSE}
@@ -562,8 +839,8 @@ plot(cohesion_val)
 ### 計算單字左右兩邊可以串接其他單字的程度
 
 ```{r}
-disorder <- function(word){
-  
+disorder <- function(word){  
+  # 其實只是練習6的內容，加上算亂度
   BASE <- piece[[as.character(nchar(word)+1)]]
   
   PATTEN1 <- paste("^", word, sep = '')
@@ -602,6 +879,16 @@ plot(disorder_val, xlab='index', ylab = 'value')
 ```
 
 ---
+## 挑出混亂程度 >1 的字串
+
+```{r}
+dis_words <- names(which(disorder_val > 1))
+```
+```{r echo=FALSE}
+tail(dis_words, 20)
+```
+
+---
 ## 混亂程度的例子
 
 ### 兩側混亂程度高的字
@@ -614,19 +901,23 @@ tail(names(sort(disorder_val)), 15)
 head(names(sort(disorder_val)), 15)
 ```
 
----
-## 練習題9
-### 請用 which 挑出 disorder_val 混亂程度 >1 的單字
 
-```r
-dis_words <- names(which(disorder_val > __ ))
-```
-```{r echo=FALSE}
-dis_words <- names(which(disorder_val > 1))
-```
-```{r echo=FALSE}
-tail(dis_words, 20)
-```
+--- &vcenter 
+
+<q> 到這邊真是辛苦大家了 ... </q>
+<q> 我們總算挑出有意義的字串了 歐耶！ </q>
+
+--- &vcenter 
+
+<q> 接下來我們算出關鍵字的出現次數 </q>
+
+<q> 然後把各個出現次數合併起來就好了 </q>
+
+
+--- &vcenter 
+<q>這步驟 用 R 做起來真的是很輕鬆愉快 </q>
+<q> 讓我們介紹一個很強大的 function </q>
+
 
 ---
 ## str_count 用法
@@ -641,14 +932,16 @@ lapply(c("a", "e"), function(x){
 ```
 
 ---
-## 練習題10
+## 練習題7
 ### dis_words 裡面每個單字在新聞 title 的出現次數是多少？
 ### 請填入 dis_words 和 title
 
 ```r
-tmp <- lapply( __ , function(word){
+tmp <- lapply( __ , function(word){ 
+  # 算出 word 在title的出現次數
   str_count( __ , word)
 })
+# 把算出來結果，用 column combind 成一張表格
 words_tbl <- do.call(cbind, tmp)
 colnames(words_tbl) <- dis_words
 ```
@@ -657,12 +950,53 @@ colnames(words_tbl) <- dis_words
 tmp <- lapply(dis_words, function(word){
   str_count(titles, word)
 })
+
 words_tbl <- do.call(cbind, tmp)
 colnames(words_tbl) <- dis_words
 ```
 ```{r echo=FALSE}
+words_tbl[1:4, sample(ncol(words_tbl), 8)]
+```
+
+
+---
+## 解答7
+
+```r
+# 把 dis_words裡面的字一個一個送進去做運算
+tmp <- lapply(dis_words, function(word){
+  # 算出 word 在title的出現次數
+  str_count(titles, word)
+})
+
+# 把算出來結果，用 column combind 成一張表格
+words_tbl <- do.call(cbind, tmp)
+colnames(words_tbl) <- dis_words
 words_tbl[1:6, sample(ncol(words_tbl), 8)]
 ```
+
+--- &vcenter
+
+<q> 我們今天的課程就到這邊 </q>
+
+<q> 希望大家已經學到以下幾件事情 </q>
+
+--- &vcenter
+
+<q> xpath + web scraping 的概念 </q>
+
+<q> 利用正規表達來抽出需要的資訊 </q>
+
+<q> 瞭解兩種方法來取出有意義的字串 </q>
+
+<q> 計算字串的出現次數，與整理成出現次數表格 </q>
+
+
+--- &vcenter
+
+<q> 後面的投影片可以回家自行服用</q>
+<q> 不用客氣 </q>
+
 
 ---
 ## xts 用法
@@ -680,7 +1014,7 @@ xts(x,y)
 ```
 
 ---
-## 練習題11
+## 練習題8
 ### 請將 words_tbl 轉換成 xts 格式
 ### 提示：就是要轉 words_tbl ！！ 
 
@@ -693,6 +1027,14 @@ words_tbl_xts <- xts(words_tbl, as.POSIXct(dates))
 ```{r echo=FALSE}
 words_tbl_xts[1:6, 1:8]
 ```
+
+---
+## 解答8
+
+```r
+words_tbl_xts <- xts(words_tbl, as.POSIXct(dates))
+```
+
 
 ---
 ## 轉成 xts 格式的好處
@@ -713,10 +1055,11 @@ count.weeks["2014-01/2014-02", 100:110]
 ```
 
 ---
-## 練習題12
+## 練習題9
 ### 請計算每個單字在 1~5 月的 每個月出現次數
 ### 填入 weeks or months ?
 ### 填入 2014-?/2014-?
+
 
 ```r
 ep.month <- endpoints(words_tbl_xts, ___ , k=1)
@@ -729,6 +1072,16 @@ ep.months <- endpoints(words_tbl_xts, "months", k=1)
 count.months <- period.apply(words_tbl_xts, ep.months, FUN=colSums)
 count.months["2014-01/2014-05", 100:110]
 ```
+
+---
+## 解答9
+
+```r
+ep.months <- endpoints(words_tbl_xts, "months", k=1)
+count.months <- period.apply(words_tbl_xts, ep.months, FUN=colSums)
+count.months["2014-01/2014-05", 100:110]
+```
+
 
 ---
 ## CH4 (番外篇) 抓股票找狀態
@@ -911,7 +1264,7 @@ x.dc
 
 
 ---
-## 練習題13
+## 練習題10
 ###  請利用 return_date 和 cluster 整理出下面表格
 
 ```r
@@ -929,6 +1282,17 @@ return.status <- dcast(return.status, return_date  ~ cluster, fill = 0)
 ```{r echo=FALSE}
 head(return.status)
 ```
+
+
+---
+## 解答10
+
+```r
+return_date <- names(mystocks.return_all)
+
+return.status <- dcast(return.status, return_date  ~ cluster, fill = 0)
+```
+
 
 ---
 
@@ -952,7 +1316,7 @@ merge.xts(x,y)
 ```
 
 ---
-## 練習題14
+## 練習題11
 ### 把`關鍵字`和`股票漲跌`依據`時間`做合併, 表格名稱 : words_tbl_xts, return.status.xts
 
 ```r
@@ -967,6 +1331,17 @@ names(final_tbl) <- c(dis_words, names(return.status[,-1]))
 tmp <- dim(final_tbl)[2]
 final_tbl[1:6, (tmp-7):tmp]
 ```
+
+
+
+---
+## 解答11
+
+```r
+final_tbl <- merge.xts(words_tbl_xts, return.status.xts, fill=0)
+names(final_tbl) <- c(dis_words, names(return.status[,-1]))
+```
+
 
 ---
 
@@ -1033,7 +1408,7 @@ titles[index]
 ```
 
 ---
-## 練習題15
+## 練習題12
 
 ### 請利用 grepl 與 & 找出同時出現 '捷運' 與 '房價' 的 titles
 
@@ -1048,6 +1423,17 @@ index <- grepl("捷運", titles) & grepl("房價", titles)
 titles[index]
 
 ```
+
+
+---
+## 解答12
+
+```r
+index <- grepl("捷運", titles) & grepl("房價", titles)
+titles[index]
+
+```
+
 
 --- 
 ## 一些後續應用 
@@ -1075,154 +1461,13 @@ text(x, y, labels = row.names(t(final_tbl)), cex=.7)
 ```
 
 ---
-## 解答篇
-
----
-## 解答1
-
-```r
-src_list <- xpathSApply(doc, "//cite", xmlValue)
-
-```
-
----
-## 解答2
-```{r}
-x <- c("apples * 14", "flour", "sugar * 100", "milk * 3")
-str_extract(x, "a[elp]+s")
-```
-
----
-## 解答3
-```r
-dates <- str_extract(hourse_news, "\\d{4}-\\d{2}-\\d{2}")
-titles <- str_replace(hourse_news, "\\d{4}-\\d{2}-\\d{2}", "")
-
-hourse_news <- cbind(dates, titles)
-```
-
----
-## 解答4
-```r
-ngram <- function(sentence, n){
-  chunk <- c()
-  for(i in 1 : (nchar(sentence)-n+1)){
-    chunk <- append(chunk, substr(sentence, i, i+n-1))
-  }
-  return(chunk)
-}
-```
-
----
-## 解答5
-
-```r
-segmentWord <- function(word){
-  n <- nchar(word)-1
-  seg <- lapply(1: n, function(i){
-    w1 <- substr(word, 1, i)
-    w2 <- substr(word,i+1, n+1)
-    c(w1,w2)
-  })
-  return(seg)
-}
-```
-
----
-## 解答6
-
-```r
-word <- '信義區'
-BASE <- piece[[as.character(nchar(word)+1)]]
-  
-PATTEN1 <- paste('^', '信義區', sep = '')
-matchs1 <- grep(PATTEN1 ,BASE , value = TRUE)
-  
-PATTEN2 <- paste('信義區' ,'$', sep = '' )
-matchs2 <- grep(PATTEN1 ,BASE , value = TRUE)
-
-```
-
----
-## 解答7
-```r
-words_2_5 <- unique(unlist(piece[2:5]))
-```
-
----
-## 解答8
-```r
-words <- names(which(words_freq[words_2_5] > 2))
-```
-
-
----
-## 解答9
-```r
-dis_words <- names(which(disorder_val > 1))
-```
-
----
-## 解答10
-
-```r
-tmp <- lapply(dis_words, function(word){
-  str_count(titles, word)
-})
-words_tbl <- do.call(cbind, tmp)
-colnames(words_tbl) <- dis_words
-words_tbl[1:6, sample(ncol(words_tbl), 8)]
-```
-
----
-## 解答11
-
-```r
-words_tbl_xts <- xts(words_tbl, as.POSIXct(dates))
-```
-
-
----
-## 解答12
-
-```r
-ep.months <- endpoints(words_tbl_xts, "months", k=1)
-count.months <- period.apply(words_tbl_xts, ep.months, FUN=colSums)
-count.months["2014-01/2014-05", 100:110]
-```
-
----
-## 解答13
-
-```r
-return_date <- names(mystocks.return_all)
-
-return.status <- dcast(return.status, return_date  ~ cluster, fill = 0)
-```
-
-
----
-## 解答14
-
-```r
-final_tbl <- merge.xts(words_tbl_xts, return.status.xts, fill=0)
-names(final_tbl) <- c(dis_words, names(return.status[,-1]))
-```
-
----
-## 解答15
-
-```r
-index <- grepl("捷運", titles) & grepl("房價", titles)
-titles[index]
-
-```
-
----
 
 ## 附錄 
 ### 為前面網頁的下載步驟，使用套件為 [RSelenium](https://github.com/ropensci/RSelenium)
-### 若有問題再與講者討論
+
+### 若有安裝問題請看 RSelenium 官網的安裝教學
+### 這裡有一些大大們提供的[問題解決方法](http://www.meetup.com/Taiwan-R/events/196182542/)
+
 
 ---
   
